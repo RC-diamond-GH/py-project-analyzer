@@ -1,0 +1,52 @@
+### Python / packaging
+__pycache__/
+*.py[cod]
+*.pyd
+
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+### Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.env/
+
+### Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.nox/
+.tox/
+
+### Type checking / lint / formatting
+.mypy_cache/
+.pytype/
+.pyre/
+.ruff_cache/
+
+### Jupyter
+.ipynb_checkpoints/
+
+### Logs / local data
+*.log
+
+### IDEs / editors
+.idea/
+.vscode/
+*.iml
+
+### OS files
+.DS_Store
+Thumbs.db
+
+### Build system / tooling caches
+.cache/
+pip-wheel-metadata/
+
