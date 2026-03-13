@@ -75,7 +75,7 @@ class PlantUmlOutputRenderService:
     """Renders project data as a PlantUML class diagram."""
 
     def render(self, project_data: ProjectData) -> str:
-        lines = ["@startuml", ""]
+        lines = ["@startuml name", ""]
         aliases = {name: _to_alias(name) for name in project_data}
 
         for filename, data in project_data.items():

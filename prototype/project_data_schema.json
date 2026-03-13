@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProjectData",
+  "description": "Structure of the analyzed Python project dependencies.",
+  "type": "object",
+  "patternProperties": {
+    "^.*$": {
+      "type": "object",
+      "properties": {
+        "definitions": {
+          "type": "array",
+          "description": "List of symbols (classes, functions, async functions) defined in this file.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "description": "Mapping of target file paths to the list of symbols called within them.",
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["definitions", "dependencies"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

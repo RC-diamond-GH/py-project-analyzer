@@ -1,4 +1,4 @@
-@startuml
+@startuml name
 
 class "prototype/prototype_script.py" as prototype_prototype_script_py {
     +CodeAnalyzer()
