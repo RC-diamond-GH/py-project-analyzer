@@ -13,7 +13,11 @@ from py_project_analyzer.services.code_analysis_service import (
     FileAnalysisResult,
 )
 from py_project_analyzer.services.dependency_link_service import DependencyLinkService
-from py_project_analyzer.services.output_render_service import OutputRenderService
+from py_project_analyzer.services.output_render_service import (
+    JsonOutputRenderService,
+    MermaidOutputRenderService,
+    PlantUmlOutputRenderService,
+)
 from py_project_analyzer.services.project_scan_service import ProjectScanService
 
 
@@ -28,25 +32,25 @@ def build_arg_parser() -> argparse.ArgumentParser:
         help="Root directory to analyze (default: current directory).",
     )
     parser.add_argument(
-        "--mermaid-out",
-        default="graph.md",
-        help="Output path for Mermaid text (default: graph.md).",
+        "--format",
+        choices=["mermaid", "json", "plantuml"],
+        default="mermaid",
+        help="Output format (default: mermaid).",
     )
     parser.add_argument(
-        "--json-out",
-        default="graph.json",
-        help="Output path for JSON result (default: graph.json).",
+        "--out",
+        default="graph.md",
+        help="Output file path (default: graph.md).",
     )
     return parser
 
 
-def run(root: str, mermaid_out: str, json_out: str) -> int:
+def run(root: str, fmt: str, out: str) -> int:
     root_path = Path(root).resolve()
     scan_service = ProjectScanService()
     provider = FileSystemCandidatePathProvider()
     analysis_service = CodeAnalysisService()
     link_service = DependencyLinkService()
-    render_service = OutputRenderService()
 
     candidate_files = scan_service.plan_targets(str(root_path), provider)
     per_file: dict[str, FileAnalysisResult] = {}
@@ -66,21 +70,27 @@ def run(root: str, mermaid_out: str, json_out: str) -> int:
             continue
 
     project_data = link_service.link(per_file)
-    json_text = render_service.render_json(project_data)
-    mermaid_text = render_service.render_mermaid(project_data)
 
-    Path(json_out).write_text(json_text, encoding="utf-8")
-    Path(mermaid_out).write_text(mermaid_text, encoding="utf-8")
+    renderers = {
+        "mermaid": MermaidOutputRenderService(),
+        "json": JsonOutputRenderService(),
+        "plantuml": PlantUmlOutputRenderService(),
+    }
+    render_service = renderers[fmt]
+
+    out_text = render_service.render(project_data)
+
+    out_path = Path(out)
+    out_path.write_text(out_text, encoding="utf-8")
 
     print(f"Analyzed files: {len(per_file)}")
-    print(f"JSON output: {json_out}")
-    print(f"Mermaid output: {mermaid_out}")
+    print(f"Output saved to: {out_path} (format: {fmt})")
     return 0
 
 
 def main() -> int:
     args = build_arg_parser().parse_args()
-    return run(args.root, args.mermaid_out, args.json_out)
+    return run(args.root, args.format, args.out)
 
 
 if __name__ == "__main__":

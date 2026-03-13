@@ -1,0 +1,180 @@
+{
+    "prototype/prototype_script.py": {
+        "definitions": [
+            "CodeAnalyzer",
+            "visit_ClassDef",
+            "visit_FunctionDef",
+            "visit_AsyncFunctionDef",
+            "visit_Call",
+            "analyze_project",
+            "generate_mermaid",
+            "getAllSrcData"
+        ],
+        "dependencies": {}
+    },
+    "src/main.py": {
+        "definitions": [
+            "build_arg_parser",
+            "run",
+            "main"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/code_analysis_service.py": [
+                "CodeAnalysisService",
+                "analyze_source"
+            ],
+            "src/py_project_analyzer/services/dependency_link_service.py": [
+                "DependencyLinkService",
+                "link"
+            ],
+            "src/py_project_analyzer/adapters/filesystem_candidate_path_provider.py": [
+                "FileSystemCandidatePathProvider"
+            ],
+            "src/py_project_analyzer/services/output_render_service.py": [
+                "JsonOutputRenderService",
+                "MermaidOutputRenderService",
+                "render"
+            ],
+            "src/py_project_analyzer/services/project_scan_service.py": [
+                "ProjectScanService",
+                "plan_targets"
+            ]
+        }
+    },
+    "src/py_project_analyzer/__init__.py": {
+        "definitions": [],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/adapters/__init__.py": {
+        "definitions": [],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/adapters/filesystem_candidate_path_provider.py": {
+        "definitions": [
+            "FileSystemCandidatePathProvider",
+            "list_candidate_paths"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/__init__.py": {
+        "definitions": [],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/code_analysis_service.py": {
+        "definitions": [
+            "FileAnalysisResult",
+            "_CodeAnalyzer",
+            "visit_ClassDef",
+            "visit_FunctionDef",
+            "visit_AsyncFunctionDef",
+            "visit_Call",
+            "CodeAnalysisService",
+            "analyze_source"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/dependency_link_service.py": {
+        "definitions": [
+            "DependencyLinkService",
+            "link"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/output_render_service.py": {
+        "definitions": [
+            "OutputRenderService",
+            "render",
+            "JsonOutputRenderService",
+            "render",
+            "MermaidOutputRenderService",
+            "render",
+            "_to_alias"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/project_scan_service.py": {
+        "definitions": [
+            "ProjectScanService",
+            "filter_python_files",
+            "plan_targets",
+            "CandidatePathProvider",
+            "list_candidate_paths"
+        ],
+        "dependencies": {
+            "tests/project_scan_service.test.py": [
+                "list_candidate_paths"
+            ]
+        }
+    },
+    "tests/code_analysis_service.test.py": {
+        "definitions": [
+            "test_should_extract_class_and_function_definitions",
+            "test_should_ignore_dunder_function_definitions",
+            "test_should_extract_call_names_from_name_and_attribute_nodes",
+            "test_should_raise_value_error_for_invalid_python_code"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/code_analysis_service.py": [
+                "CodeAnalysisService",
+                "analyze_source"
+            ]
+        }
+    },
+    "tests/dependency_link_service.test.py": {
+        "definitions": [
+            "test_should_link_cross_file_calls_using_global_registry",
+            "test_should_not_link_calls_to_same_file_definitions"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/dependency_link_service.py": [
+                "DependencyLinkService",
+                "link"
+            ],
+            "src/py_project_analyzer/services/code_analysis_service.py": [
+                "FileAnalysisResult"
+            ]
+        }
+    },
+    "tests/filesystem_candidate_path_provider.test.py": {
+        "definitions": [
+            "test_should_list_all_files_as_relative_posix_paths"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/adapters/filesystem_candidate_path_provider.py": [
+                "FileSystemCandidatePathProvider"
+            ],
+            "tests/project_scan_service.test.py": [
+                "list_candidate_paths"
+            ]
+        }
+    },
+    "tests/output_render_service.test.py": {
+        "definitions": [
+            "test_should_render_mermaid_class_diagram_from_project_data",
+            "test_should_render_json_output"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/output_render_service.py": [
+                "JsonOutputRenderService",
+                "MermaidOutputRenderService",
+                "render"
+            ]
+        }
+    },
+    "tests/project_scan_service.test.py": {
+        "definitions": [
+            "test_should_keep_only_python_files_after_exclusion_rules",
+            "test_should_return_deterministic_sorted_paths",
+            "test_should_use_provider_dependency_interface_to_plan_targets",
+            "FakeProvider",
+            "list_candidate_paths"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/project_scan_service.py": [
+                "ProjectScanService",
+                "filter_python_files",
+                "plan_targets"
+            ]
+        }
+    }
+}

@@ -30,9 +30,25 @@ classDiagram
     }
 
     class OutputRenderService {
-        +render_json(project_data: ProjectData) str
-        +render_mermaid(project_data: ProjectData) str
+        <<interface>>
+        +render(project_data: ProjectData) str
     }
+
+    class MermaidOutputRenderService {
+        +render(project_data: ProjectData) str
+    }
+
+    class JsonOutputRenderService {
+        +render(project_data: ProjectData) str
+    }
+
+    class PlantUmlOutputRenderService {
+        +render(project_data: ProjectData) str
+    }
+
+    MermaidOutputRenderService ..|> OutputRenderService : implements
+    JsonOutputRenderService ..|> OutputRenderService : implements
+    PlantUmlOutputRenderService ..|> OutputRenderService : implements
 
     FileSystemCandidatePathProvider ..|> CandidatePathProvider : implements
     ProjectScanService ..> CandidatePathProvider : depends on

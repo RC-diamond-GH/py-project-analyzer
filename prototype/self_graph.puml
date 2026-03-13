@@ -1,0 +1,113 @@
+@startuml
+
+class "prototype/prototype_script.py" as prototype_prototype_script_py {
+    +CodeAnalyzer()
+    +visit_ClassDef()
+    +visit_FunctionDef()
+    +visit_AsyncFunctionDef()
+    +visit_Call()
+    +analyze_project()
+    +generate_mermaid()
+    +getAllSrcData()
+}
+
+class "src/main.py" as src_main_py {
+    +build_arg_parser()
+    +run()
+    +main()
+}
+
+class "src/py_project_analyzer/__init__.py" as src_py_project_analyzer___init___py {
+}
+
+class "src/py_project_analyzer/adapters/__init__.py" as src_py_project_analyzer_adapters___init___py {
+}
+
+class "src/py_project_analyzer/adapters/filesystem_candidate_path_provider.py" as src_py_project_analyzer_adapters_filesystem_candidate_path_provider_py {
+    +FileSystemCandidatePathProvider()
+    +list_candidate_paths()
+}
+
+class "src/py_project_analyzer/services/__init__.py" as src_py_project_analyzer_services___init___py {
+}
+
+class "src/py_project_analyzer/services/code_analysis_service.py" as src_py_project_analyzer_services_code_analysis_service_py {
+    +FileAnalysisResult()
+    +_CodeAnalyzer()
+    +visit_ClassDef()
+    +visit_FunctionDef()
+    +visit_AsyncFunctionDef()
+    +visit_Call()
+    +CodeAnalysisService()
+    +analyze_source()
+}
+
+class "src/py_project_analyzer/services/dependency_link_service.py" as src_py_project_analyzer_services_dependency_link_service_py {
+    +DependencyLinkService()
+    +link()
+}
+
+class "src/py_project_analyzer/services/output_render_service.py" as src_py_project_analyzer_services_output_render_service_py {
+    +_to_alias()
+    +OutputRenderService()
+    +render()
+    +JsonOutputRenderService()
+    +render()
+    +MermaidOutputRenderService()
+    +render()
+    +PlantUmlOutputRenderService()
+    +render()
+}
+
+class "src/py_project_analyzer/services/project_scan_service.py" as src_py_project_analyzer_services_project_scan_service_py {
+    +ProjectScanService()
+    +filter_python_files()
+    +plan_targets()
+    +CandidatePathProvider()
+    +list_candidate_paths()
+}
+
+class "tests/code_analysis_service.test.py" as tests_code_analysis_service_test_py {
+    +test_should_extract_class_and_function_definitions()
+    +test_should_ignore_dunder_function_definitions()
+    +test_should_extract_call_names_from_name_and_attribute_nodes()
+    +test_should_raise_value_error_for_invalid_python_code()
+}
+
+class "tests/dependency_link_service.test.py" as tests_dependency_link_service_test_py {
+    +test_should_link_cross_file_calls_using_global_registry()
+    +test_should_not_link_calls_to_same_file_definitions()
+}
+
+class "tests/filesystem_candidate_path_provider.test.py" as tests_filesystem_candidate_path_provider_test_py {
+    +test_should_list_all_files_as_relative_posix_paths()
+}
+
+class "tests/output_render_service.test.py" as tests_output_render_service_test_py {
+    +test_should_render_mermaid_class_diagram_from_project_data()
+    +test_should_render_json_output()
+    +test_should_render_plantuml_class_diagram_from_project_data()
+}
+
+class "tests/project_scan_service.test.py" as tests_project_scan_service_test_py {
+    +test_should_keep_only_python_files_after_exclusion_rules()
+    +test_should_return_deterministic_sorted_paths()
+    +test_should_use_provider_dependency_interface_to_plan_targets()
+    +FakeProvider()
+    +list_candidate_paths()
+}
+
+src_main_py --> src_py_project_analyzer_services_code_analysis_service_py : call CodeAnalysisService(), analyze_source()
+src_main_py --> src_py_project_analyzer_services_dependency_link_service_py : call DependencyLinkService(), link()
+src_main_py --> src_py_project_analyzer_adapters_filesystem_candidate_path_provider_py : call FileSystemCandidatePathProvider()
+src_main_py --> src_py_project_analyzer_services_output_render_service_py : call JsonOutputRenderService(), MermaidOutputRenderService(), PlantUmlOutputRenderService(), render()
+src_main_py --> src_py_project_analyzer_services_project_scan_service_py : call ProjectScanService(), plan_targets()
+src_py_project_analyzer_services_project_scan_service_py --> tests_project_scan_service_test_py : call list_candidate_paths()
+tests_code_analysis_service_test_py --> src_py_project_analyzer_services_code_analysis_service_py : call CodeAnalysisService(), analyze_source()
+tests_dependency_link_service_test_py --> src_py_project_analyzer_services_dependency_link_service_py : call DependencyLinkService(), link()
+tests_dependency_link_service_test_py --> src_py_project_analyzer_services_code_analysis_service_py : call FileAnalysisResult()
+tests_filesystem_candidate_path_provider_test_py --> src_py_project_analyzer_adapters_filesystem_candidate_path_provider_py : call FileSystemCandidatePathProvider()
+tests_filesystem_candidate_path_provider_test_py --> tests_project_scan_service_test_py : call list_candidate_paths()
+tests_output_render_service_test_py --> src_py_project_analyzer_services_output_render_service_py : call JsonOutputRenderService(), MermaidOutputRenderService(), PlantUmlOutputRenderService(), render()
+tests_project_scan_service_test_py --> src_py_project_analyzer_services_project_scan_service_py : call ProjectScanService(), filter_python_files(), plan_targets()
+@enduml

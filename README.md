@@ -25,15 +25,31 @@ poetry install
 
 ## Usage
 
-工具包含一个最小 CLI（在 `src/main.py`），支持对任意路径进行扫描：
+工具包含一个最小 CLI（位于 `src/main.py`），支持对任意路径进行扫描并导出多种格式的图表。
 
-```bash
-# 分析当前目录，默认输出 graph.md 与 graph.json
-poetry run python src/main.py --root .
+### 基本参数
+- `--root`: 待分析的项目根目录路径（默认值：`.`，即当前目录）。
+- `--format`: 输出文件的格式。支持 `mermaid`, `json`, `plantuml` 三种格式（默认值：`mermaid`）。
+- `--out`: 输出文件的保存路径（默认值：`graph.md`）。
 
-# 指定目标路径，并重定向输出文件名
-poetry run python src/main.py --root /path/to/project --mermaid-out result.md --json-out result.json
-```
+### 常见用法示例
+
+1. **扫描当前目录并导出默认的 Mermaid 类图**
+   ```bash
+   poetry run python src/main.py
+   ```
+   > 这将在当前目录生成一个包含 Mermaid 语法类图的 `graph.md` 文件。
+
+2. **分析指定项目并导出 PlantUML 图表**
+   ```bash
+   poetry run python src/main.py --root /path/to/my_project --format plantuml --out my_project_arch.puml
+   ```
+
+3. **导出结构化的 JSON 数据用于二次开发**
+   ```bash
+   poetry run python src/main.py --root /path/to/my_project --format json --out my_project_data.json
+   ```
+   > 生成的 JSON 将包含所有被分析文件中的定义及依赖关系。
 
 ## Testing
 
