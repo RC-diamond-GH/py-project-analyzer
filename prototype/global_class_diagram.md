@@ -29,6 +29,12 @@ classDiagram
         +link(per_file_results: dict~str, FileAnalysisResult~) ProjectData
     }
 
+    class GraphFilterService {
+        +apply_module_exclusions(project_data: ProjectData, excluded_modules: set~str~) ProjectData
+        +apply_function_exclusions(project_data: ProjectData, excluded_functions: set~str~) ProjectData
+        +extract_module_subgraph(project_data: ProjectData, modules: set~str~) ProjectData
+    }
+
     class OutputRenderService {
         <<interface>>
         +render(project_data: ProjectData) str
@@ -54,4 +60,5 @@ classDiagram
     ProjectScanService ..> CandidatePathProvider : depends on
     CodeAnalysisService --> FileAnalysisResult : returns
     DependencyLinkService ..> FileAnalysisResult : consumes
+    GraphFilterService ..> DependencyLinkService : post-processes output
 ```

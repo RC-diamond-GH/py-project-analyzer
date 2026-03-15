@@ -10,6 +10,9 @@ requires-python = ">=3.13"
 dependencies = [
 ]
 
+[project.scripts]
+py-project-analyzer = "py_project_analyzer.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.4.2,<9.0.0"
