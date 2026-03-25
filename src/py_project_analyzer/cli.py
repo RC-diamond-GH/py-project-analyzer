@@ -46,7 +46,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--subgraph-modules",
         default="",
-        help="Comma-separated module paths to extract as subgraph nodes.",
+        help="Comma-separated seed modules; keep recursive downstream subgraph.",
     )
     parser.add_argument(
         "--exclude-modules",
@@ -57,6 +57,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--exclude-functions",
         default="",
         help="Comma-separated function names to hide from definitions and edges.",
+    )
+    parser.add_argument(
+        "--ignore-private-func",
+        action="store_true",
+        help="Hide all functions starting with '_' from definitions and edges.",
     )
     return parser
 
@@ -72,6 +77,7 @@ def run(
     subgraph_modules: str = "",
     exclude_modules: str = "",
     exclude_functions: str = "",
+    ignore_private_func: bool = False,
 ) -> int:
     root_path = Path(root).resolve()
     scan_service = ProjectScanService()
@@ -106,6 +112,8 @@ def run(
         project_data,
         _parse_csv_arg(exclude_functions),
     )
+    if ignore_private_func:
+        project_data = graph_filter_service.apply_private_function_exclusion(project_data)
     project_data = graph_filter_service.extract_module_subgraph(
         project_data,
         _parse_csv_arg(subgraph_modules),
@@ -137,4 +145,5 @@ def main() -> int:
         args.subgraph_modules,
         args.exclude_modules,
         args.exclude_functions,
+        args.ignore_private_func,
     )

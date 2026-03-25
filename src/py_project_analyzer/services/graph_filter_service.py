@@ -70,23 +70,77 @@ class GraphFilterService:
             }
         return filtered
 
+    def apply_private_function_exclusion(
+        self,
+        project_data: ProjectData,
+    ) -> ProjectData:
+        """Hide all functions starting with '_' in definitions and edge labels."""
+        filtered: ProjectData = {}
+        for module, data in project_data.items():
+            definitions = data.get("definitions", [])
+            if not isinstance(definitions, list):
+                definitions = []
+            kept_definitions = [
+                func for func in definitions if not (isinstance(func, str) and func.startswith("_"))
+            ]
+
+            dependencies = data.get("dependencies", {})
+            if not isinstance(dependencies, dict):
+                dependencies = {}
+            kept_dependencies: dict[str, list[str]] = {}
+            for target, calls in dependencies.items():
+                if not isinstance(calls, list):
+                    continue
+                kept_calls = [
+                    name
+                    for name in calls
+                    if not (isinstance(name, str) and name.startswith("_"))
+                ]
+                if kept_calls:
+                    kept_dependencies[target] = kept_calls
+
+            filtered[module] = {
+                "definitions": kept_definitions,
+                "dependencies": kept_dependencies,
+            }
+        return filtered
+
     def extract_module_subgraph(
         self,
         project_data: ProjectData,
         modules: set[str],
     ) -> ProjectData:
+        """Extract a recursive downstream subgraph from seed modules."""
         if not modules:
             return deepcopy(project_data)
 
+        included: set[str] = set()
+        stack = [module for module in modules if module in project_data]
+        while stack:
+            module = stack.pop()
+            if module in included:
+                continue
+            included.add(module)
+
+            data = project_data.get(module, {})
+            dependencies = data.get("dependencies", {})
+            if not isinstance(dependencies, dict):
+                continue
+            for target in dependencies:
+                if target in project_data and target not in included:
+                    stack.append(target)
+
         subgraph: ProjectData = {}
         for module, data in project_data.items():
-            if module not in modules:
+            if module not in included:
                 continue
             dependencies = data.get("dependencies", {})
             if not isinstance(dependencies, dict):
                 dependencies = {}
             kept_dependencies = {
-                target: calls for target, calls in dependencies.items() if target in modules
+                target: calls
+                for target, calls in dependencies.items()
+                if target in included
             }
             subgraph[module] = {
                 "definitions": list(data.get("definitions", [])),

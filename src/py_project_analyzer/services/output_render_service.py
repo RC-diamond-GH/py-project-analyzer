@@ -97,7 +97,7 @@ class PlantUmlOutputRenderService:
                 if not target_alias:
                     continue
                 if isinstance(called_items, list):
-                    calls_str = ", ".join(f"{item}()" for item in called_items)
+                    calls_str = "\\n".join(f"{item}()" for item in called_items)
                 else:
                     calls_str = ""
                 label = f" : call {calls_str}" if calls_str else ""

@@ -55,11 +55,34 @@ def test_should_drop_edge_if_all_called_functions_are_excluded():
     assert result["b.py"]["definitions"] == []
 
 
-def test_should_extract_module_subgraph_by_selected_nodes():
+def test_should_extract_module_subgraph_recursively_from_seed_nodes():
     service = GraphFilterService()
     graph = _sample_graph()
 
-    result = service.extract_module_subgraph(graph, {"a.py", "b.py"})
+    result = service.extract_module_subgraph(graph, {"a.py"})
 
-    assert set(result.keys()) == {"a.py", "b.py"}
-    assert result["a.py"]["dependencies"] == {"b.py": ["fb", "mask_me"]}
+    assert set(result.keys()) == {"a.py", "b.py", "c.py"}
+    assert result["a.py"]["dependencies"] == {"b.py": ["fb", "mask_me"], "c.py": ["fc"]}
+    assert result["b.py"]["dependencies"] == {"c.py": ["fc"]}
+
+
+def test_should_hide_private_functions_when_requested():
+    service = GraphFilterService()
+    graph = {
+        "a.py": {
+            "definitions": ["fa", "_hidden", "__dunder"],
+            "dependencies": {"b.py": ["fb", "_internal"]},
+        },
+        "b.py": {
+            "definitions": ["fb", "_helper"],
+            "dependencies": {"c.py": ["_only_private"]},
+        },
+        "c.py": {"definitions": ["fc"], "dependencies": {}},
+    }
+
+    result = service.apply_private_function_exclusion(graph)
+
+    assert result["a.py"]["definitions"] == ["fa"]
+    assert result["b.py"]["definitions"] == ["fb"]
+    assert result["a.py"]["dependencies"] == {"b.py": ["fb"]}
+    assert result["b.py"]["dependencies"] == {}

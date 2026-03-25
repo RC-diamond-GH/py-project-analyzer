@@ -1,0 +1,119 @@
+{
+    "src/py_project_analyzer/adapters/filesystem_candidate_path_provider.py": {
+        "definitions": [
+            "FileSystemCandidatePathProvider",
+            "list_candidate_paths"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/cli.py": {
+        "definitions": [
+            "build_arg_parser",
+            "_parse_csv_arg",
+            "run",
+            "main"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/code_analysis_service.py": [
+                "CodeAnalysisService",
+                "analyze_source"
+            ],
+            "src/py_project_analyzer/services/dependency_link_service.py": [
+                "DependencyLinkService",
+                "link"
+            ],
+            "src/py_project_analyzer/adapters/filesystem_candidate_path_provider.py": [
+                "FileSystemCandidatePathProvider"
+            ],
+            "src/py_project_analyzer/services/graph_filter_service.py": [
+                "GraphFilterService",
+                "apply_function_exclusions",
+                "apply_module_exclusions",
+                "extract_module_subgraph"
+            ],
+            "src/py_project_analyzer/services/output_render_service.py": [
+                "JsonOutputRenderService",
+                "MermaidOutputRenderService",
+                "PlantUmlOutputRenderService",
+                "render"
+            ],
+            "src/py_project_analyzer/services/project_scan_service.py": [
+                "ProjectScanService",
+                "plan_targets"
+            ]
+        }
+    },
+    "src/py_project_analyzer/services/code_analysis_service.py": {
+        "definitions": [
+            "FileAnalysisResult",
+            "_CodeAnalyzer",
+            "visit_ClassDef",
+            "visit_FunctionDef",
+            "visit_AsyncFunctionDef",
+            "visit_Call",
+            "CodeAnalysisService",
+            "analyze_source"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/dependency_link_service.py": {
+        "definitions": [
+            "DependencyLinkService",
+            "link"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/graph_filter_service.py": {
+        "definitions": [
+            "GraphFilterService",
+            "apply_module_exclusions",
+            "apply_function_exclusions",
+            "extract_module_subgraph"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/output_render_service.py": {
+        "definitions": [
+            "_to_alias",
+            "OutputRenderService",
+            "render",
+            "JsonOutputRenderService",
+            "render",
+            "MermaidOutputRenderService",
+            "render",
+            "PlantUmlOutputRenderService",
+            "render"
+        ],
+        "dependencies": {}
+    },
+    "src/py_project_analyzer/services/project_scan_service.py": {
+        "definitions": [
+            "ProjectScanService",
+            "filter_python_files",
+            "plan_targets",
+            "CandidatePathProvider",
+            "list_candidate_paths"
+        ],
+        "dependencies": {
+            "tests/project_scan_service.test.py": [
+                "list_candidate_paths"
+            ]
+        }
+    },
+    "tests/project_scan_service.test.py": {
+        "definitions": [
+            "test_should_keep_only_python_files_after_exclusion_rules",
+            "test_should_return_deterministic_sorted_paths",
+            "test_should_use_provider_dependency_interface_to_plan_targets",
+            "FakeProvider",
+            "list_candidate_paths"
+        ],
+        "dependencies": {
+            "src/py_project_analyzer/services/project_scan_service.py": [
+                "ProjectScanService",
+                "filter_python_files",
+                "plan_targets"
+            ]
+        }
+    }
+}
